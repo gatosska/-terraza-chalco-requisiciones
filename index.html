@@ -651,7 +651,12 @@ function addToCart(id){
   persist();renderCart();renderReqProducts();updateStats();
 }
 function adjustQty(id,delta){
-  const line=cart.find(x=>x.productId===id);if(!line)return;
+  let line=cart.find(x=>x.productId===id);
+  // El primer toque en + debe crear la línea; antes se ignoraba porque aún no existía en el carrito.
+  if(!line){
+    if(delta>0){addToCart(id);}
+    return;
+  }
   line.qty=Math.max(0,Number(line.qty)+delta);
   if(line.qty<=0)cart=cart.filter(x=>x.productId!==id);
   persist();renderCart();renderReqProducts();updateStats();
